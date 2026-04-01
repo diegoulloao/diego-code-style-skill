@@ -32,7 +32,7 @@ Prioritize readability, simplicity, clear structure, and maintainable organizati
 - Treat code like written prose with clear paragraph separation.
 - Keep together only statements that belong to the same immediate logical group.
 - Whenever a new piece of logic starts, add a blank line before it.
-- Always separate language structures such as `if`, `else`, `switch`, `for`, `for...of`, `forEach`, `while`, and similar constructs from the statements before them with a blank line, unless they are part of the exact same tightly coupled logical group.
+- Always separate language structures such as `if`, `else`, `switch`, `for`, `for...of`, `forEach`, `while`, and similar constructs from the statements before them with a blank line.
 - Also separate consecutive control-flow structures from one another with blank lines when they represent distinct logical steps.
 
 Preferred style:
@@ -55,115 +55,84 @@ if (separatorIndex <= 0) {
 ## Preserve Existing Structure Unless Asked
 
 - When modifying an existing file, preserve its current overall structure unless the prompt explicitly asks for a structural refactor or the change truly requires it.
-- Rules that involve heavier structural changes, such as extracting logic into custom hooks or splitting helpers, constants, types, or styles into separate files, should be treated as defaults for **new files created by the AI**.
-- For existing files that are only being edited, prefer minimal structural disruption and keep the file's established organization unless a meaningful refactor is clearly required by the task.
+- Heavy structural changes (custom hooks, splitting files) apply mainly to **new files created by the AI**.
+- For existing files, prefer minimal structural disruption.
 
 # File Structure and Organization
 
 ## Section Ordering
-
-Organize files in this order whenever applicable:
 
 1. Imports
 2. Interfaces
 3. Types
 4. Constants
 5. Helpers
-6. Main component or main implementation
-7. Secondary components or complementary members
+6. Main component
+7. Secondary components
 8. Exports
-9. Styles (when applicable, such as React Native)
+9. Styles
 
 ## Section Labels
 
-- Before each major group, add a single-line section comment **only when it meaningfully groups multiple related elements**.
-- Avoid adding group comments when:
-  - There is only a single element in that section.
-  - The structure is already obvious.
-  - The element already has a descriptive multiline comment.
-- Do not combine redundant group comments with multiline documentation blocks.
-
-Example to avoid:
-
-```ts
-// Main component
-
-/*
- * Component: Renders a styled button
- */
-```
-
-Preferred:
-
-```ts
-/*
- * Component: Renders a styled button
- */
-```
+- Use section comments only when grouping multiple elements.
+- Avoid redundancy with multiline comments.
 
 ## Import Ordering
-
-Sort imports by priority from most important to least important using this order:
 
 1. Core/global dependencies
 2. Main libraries
 3. Complementary third-party modules
-4. Utilities and helpers
+4. Utilities/helpers
 5. Enums
 6. Types
 
-Important rule:
+Important:
 
-- **All type imports must always be grouped at the very end of the import block**, regardless of which library or module they come from.
-- This includes types coming from primary dependencies such as `react`, `react-native`, or any other main library.
-- Never place type imports before regular imports, even if the source module is a core dependency.
-- Type imports must be grouped together and imported with the `type` keyword when supported.
+- **All type imports must be grouped at the very end**, regardless of source.
+- Always use `import type`.
 
 ## Constants Outside Components
 
-- Constants declared outside a component should use uppercase with underscores.
+- Use uppercase with underscores.
 
-## File Size and Modularization
+## File Size
 
-- If a file becomes too large, especially above 300 lines, strongly consider modularizing it.
-- This rule applies most strongly to **new files created by the AI**.
-- For existing files, avoid restructuring solely for style consistency unless the prompt asks for it or the change truly requires it.
+- Prefer modularization for large files (>300 lines), mainly for new files.
 
-## Splitting Helpers, Types, and Constants
+## Splitting Rules
 
-- >3 helpers → move to utils file
-- >5 types → move to types file
-- >5 constants → move to constants file
-- These split rules apply by default to **new files created by the AI**.
-- For existing files being modified, do not introduce this split unless the prompt requests it or the current task clearly benefits from it.
+- >3 helpers → utils file
+- >5 types → types file
+- >5 constants → constants file
+- Only enforce aggressively for new files.
 
 ## Component File vs Folder
 
-- Self-contained → single kebab-case file
-- With dependencies → folder with associated files
+- Self-contained → single file
+- With dependencies → folder
 
-## Parts Directory
+## Parts
 
-- Use `parts/` for internal subcomponents if needed
+- Use `parts/` for internal subcomponents.
 
-# TypeScript and JavaScript Preferences
+# TypeScript and JavaScript
 
 ## Functions
 
-- Use arrow functions whenever possible.
+- Prefer arrow functions.
 
-## Documentation Comments
+## Comments
 
 ### TypeScript
-- Use multiline comments (not JSDoc)
+
+- Multiline comments only (no JSDoc)
 - Components/classes/hooks:
-  - title (natural language)
-  - short description
+  - title
+  - description
 - Helpers:
   - description only
-- Multiline comments must use the starred block format, even if the content is only one line.
 
-Preferred format:
+Format:
 
 ```ts
 /*
@@ -171,13 +140,8 @@ Preferred format:
  */
 ```
 
-Do not use this format:
-
-```ts
-/* Utility function: Parses a cookie header into a key/value map. */
-```
-
 ### JavaScript
+
 - Use JSDoc
 
 # React Rules
@@ -185,19 +149,28 @@ Do not use this format:
 ## Components
 
 - Arrow function + React.FC
-- Prefer React.FC<Props> typing
-- Export separately (not inline)
+- Prefer React.FC<Props>
+- Export separately
 
-## Multiple Components
+## Classnames / cn usage
 
-- Main first
-- Secondary after
-- Exports grouped
-- Styles after exports if needed
+- Always use `clsx`, `classnames`, or project utility (e.g. `cn`).
+- Prefer passing class strings directly into `cn`.
 
-## Classnames
+Avoid:
 
-- Use clsx/classnames or project utility (e.g., cn)
+```tsx
+<div className={cn(PAGE_CONTENT_CLASS_NAME)}>
+```
+
+Preferred:
+
+```tsx
+<div className={cn("page-content")}>
+```
+
+- Avoid unnecessary indirection through constants when the class string is simple and static.
+- Use variables only when they add real value (reuse, complexity, or dynamic composition).
 
 ## Render
 
@@ -206,12 +179,9 @@ Do not use this format:
 
 ## Render Comments
 
-- Add comments for UI sections only when they meaningfully describe distinct UI regions.
-- Avoid redundant or obvious comments.
+- Only when meaningful, not obvious.
 
 # Internal Component Structure
-
-Order:
 
 1. States
 2. Memoized values
@@ -221,58 +191,51 @@ Order:
 6. Effects
 7. Layout effects
 
-- Add section comments only when grouping multiple elements.
-- Avoid section comments when there is only one element or when the grouping is obvious.
+- Use section comments only when grouping multiple items.
 
 ## Memoization
 
-- Use useMemo/useCallback when useful
+- Use when beneficial, not blindly.
 
 # Logic Extraction
 
 ## Helpers
 
-- Move heavy logic out of render
-- Prefer this by default in **new files created by the AI**
-- For existing files, preserve the current structure unless the task explicitly calls for extraction or the change genuinely requires it
+- Extract heavy logic, mainly in new files.
 
 ## Custom Hooks
 
-- Use when logic is large and tightly coupled
-- Prefer this by default in **new files created by the AI**
-- For existing files, do not move large portions of logic into a custom hook solely for style consistency unless the prompt requests it or the task requires that refactor
+- Use for large, tightly coupled logic.
+- Prefer for new files, not forced in existing ones.
 
 # React Native
 
-- Styles at bottom after exports
-- Add // Styles only if it groups multiple style rules meaningfully
+- Styles at bottom
+- Add section comment only if useful
 
 # Naming
 
-- Files: kebab-case
-- Associated files:
-  - component.utils.ts
-  - component.types.ts
-  - component.constants.ts
-  - component.styles.ts
+- kebab-case files
+- component.utils.ts
+- component.types.ts
+- component.constants.ts
+- component.styles.ts
 
 # Decision Rules
 
-1. Prioritize readability
-2. Keep structure clean
-3. Reduce render complexity
-4. Modularize large files
+1. Readability first
+2. Clean structure
+3. Minimal render logic
+4. Modularize when needed
 5. Use hooks for complex logic
 6. Stay consistent
 7. Break rules only with strong reason
-8. Preserve existing file structure when editing unless the prompt or task clearly requires structural change
-9. Use blank lines to separate distinct logic groups and language structures for better readability
-10. Avoid redundant comments when structure or documentation is already clear
+8. Preserve structure when editing existing files
+9. Use spacing to separate logic groups
+10. Avoid redundant comments
+11. Avoid unnecessary className indirection when using `cn`
 
 # Final Guidance
 
-- Follow these preferences by default
-- Respect repo-specific conventions if needed
-- Apply intent, not just literal rules
-- Optimize for maintainability and clarity
-- When editing existing files, prefer minimal and targeted changes over broad structural rewrites unless explicitly requested
+- Follow intent, not just rules
+- Optimize for maintainability
