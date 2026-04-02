@@ -45,6 +45,32 @@ if (separatorIndex <= 0) {
 }
 ```
 
+### Exception for very small functions and methods
+
+- If the full body of a function-like block is very short, do not force paragraph-style spacing.
+- This exception applies when the total content inside the function, method, handler, memo callback, callback, effect callback, or similar function-like entity is **3 lines or fewer**.
+- In those cases, keep the logic together without blank lines, even if it could be interpreted as separate logical groups.
+- Apply this exception to:
+  - regular functions
+  - arrow functions
+  - class methods
+  - handlers
+  - `useMemo`
+  - `useCallback`
+  - effect callbacks
+  - similar callback bodies
+
+Preferred style for short bodies:
+
+```ts
+const generatedJson = useMemo(() => {
+  const authJson = buildAuthJson(rawInput);
+  return stringifyAuthJson(authJson);
+}, [rawInput]);
+```
+
+- Once the function-like body becomes longer than 3 lines, resume using paragraph-style spacing between distinct logical groups.
+
 ## Comments for Complex Logic
 
 - Whenever code includes tricky logic, a hack, a workaround, a fix, or anything not immediately obvious, add a short explanatory comment.
@@ -287,6 +313,38 @@ Preferred:
 - component.constants.ts
 - component.styles.ts
 
+
+
+## Export Spacing
+
+- Never place export statements immediately attached to other structures such as components, functions, or classes.
+- Always add a blank line before any export statement unless it is directly grouped with another export.
+- Export blocks should be visually separated from implementation code.
+
+Avoid:
+
+```ts
+const Component = () => {
+  ...
+};
+export { Component };
+```
+
+Preferred:
+
+```ts
+const Component = () => {
+  ...
+};
+
+export { Component };
+```
+
+- This applies to:
+  - named exports
+  - default exports
+  - grouped exports
+
 # Decision Rules
 
 1. Readability first
@@ -302,6 +360,7 @@ Preferred:
 11. Avoid unnecessary className indirection when using `cn`
 12. Put side-effect-only imports after type imports, with a blank line before them
 13. Add blank lines between sibling JSX elements whenever one of them is multiline
+14. Skip paragraph-style spacing inside very short function-like bodies with 3 lines or fewer
 
 # Final Guidance
 
