@@ -85,11 +85,34 @@ if (separatorIndex <= 0) {
 4. Utilities/helpers
 5. Enums
 6. Types
+7. Side-effect-only imports
 
 Important:
 
-- **All type imports must be grouped at the very end**, regardless of source.
+- **All type imports must be grouped at the very end of the regular import block**, regardless of source.
+- This includes types from main libraries such as `react` or `react-native`.
 - Always use `import type`.
+- There is one exception after type imports: **side-effect-only imports** that are not assigned to a variable, such as CSS imports.
+- These side-effect-only imports must go after all type imports.
+- Add a blank line before the side-effect-only import group.
+
+Preferred style:
+
+```ts
+import React from "react";
+import { View } from "react-native";
+import clsx from "clsx";
+
+import { someHelper } from "@/utils/some-helper";
+
+import { Status } from "./component.enums";
+
+import type { FC } from "react";
+import type { ViewStyle } from "react-native";
+import type { ComponentProps, AnotherType } from "./component.types";
+
+import "./globals.css";
+```
 
 ## Constants Outside Components
 
@@ -172,6 +195,49 @@ Preferred:
 - Avoid unnecessary indirection through constants when the class string is simple and static.
 - Use variables only when they add real value (reuse, complexity, or dynamic composition).
 
+## JSX Element Spacing
+
+- Add blank lines between sibling JSX elements when at least one of them is multiline.
+- If two adjacent JSX elements are both single-line, they may remain together without a blank line.
+- If either element spans multiple lines, add a blank line between them to improve visual separation.
+- Apply this rule broadly to JSX/TSX markup so the structure is easier to scan and not visually crowded.
+
+Avoid:
+
+```tsx
+<header className="space-y-2">
+  <p className="text-xs font-semibold tracking-[0.16em] text-slate-600 uppercase">
+    Utility App
+  </p>
+  <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+    Convert Browser Tokens to JSON
+  </h1>
+  <p className="max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base">
+    Copy the value of the <span className="font-mono">Cookie</span> request header from
+    Chrome DevTools Network and transform it into auth JSON in one click.
+  </p>
+</header>
+```
+
+Preferred:
+
+```tsx
+<header className="space-y-2">
+  <p className="text-xs font-semibold tracking-[0.16em] text-slate-600 uppercase">
+    Utility App
+  </p>
+
+  <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+    Convert Browser Tokens to JSON
+  </h1>
+
+  <p className="max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base">
+    Copy the value of the <span className="font-mono">Cookie</span> request header from
+    Chrome DevTools Network and transform it into auth JSON in one click.
+  </p>
+</header>
+```
+
 ## Render
 
 - Keep render simple
@@ -234,6 +300,8 @@ Preferred:
 9. Use spacing to separate logic groups
 10. Avoid redundant comments
 11. Avoid unnecessary className indirection when using `cn`
+12. Put side-effect-only imports after type imports, with a blank line before them
+13. Add blank lines between sibling JSX elements whenever one of them is multiline
 
 # Final Guidance
 
